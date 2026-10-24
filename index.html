@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIN Decoder – Encoding & File Extractor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>BIN Decoder</h1>
+      <p class="subtitle">Finde heraus, wie die .bin encoded ist und ziehe lesbare Dateien heraus</p>
+    </header>
+
+    <section class="upload-area" id="dropzone">
+      <div class="upload-content">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p><strong>Datei hier ablegen</strong> oder klicken zum Auswählen</p>
+        <p class="hint">.bin, .dat, .rom, .img – alles Binary</p>
+        <input type="file" id="fileInput" accept="*/*" hidden>
+      </div>
+    </section>
+
+    <section id="results" class="hidden">
+      <div class="file-info">
+        <div class="info-item">
+          <span class="label">Datei</span>
+          <span id="fileName">–</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Größe</span>
+          <span id="fileSize">–</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Entropy</span>
+          <span id="entropy">–</span>
+        </div>
+        <div class="info-item">
+          <span class="label">Typ-Hinweis</span>
+          <span id="typeHint">–</span>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="overview">Übersicht</button>
+        <button class="tab" data-tab="hex">Hex Dump</button>
+        <button class="tab" data-tab="text">Text / Encoding</button>
+        <button class="tab" data-tab="signatures">Signaturen</button>
+        <button class="tab" data-tab="extract">Extrahieren</button>
+        <button class="tab" data-tab="xor">XOR Tools</button>
+      </div>
+
+      <div class="tab-content active" id="tab-overview">
+        <div class="card">
+          <h3>Schnellanalyse</h3>
+          <div id="overviewContent"></div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-hex">
+        <div class="card">
+          <div class="toolbar">
+            <label>Offset: <input type="number" id="hexOffset" value="0" min="0"></label>
+            <label>Länge: <input type="number" id="hexLength" value="512" min="16" max="4096"></label>
+            <button id="hexRefresh">Aktualisieren</button>
+          </div>
+          <pre id="hexDump" class="hex"></pre>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-text">
+        <div class="card">
+          <div class="toolbar">
+            <label>Encoding:
+              <select id="encodingSelect">
+                <option value="utf-8">UTF-8</option>
+                <option value="iso-8859-1">ISO-8859-1 (Latin-1)</option>
+                <option value="windows-1252">Windows-1252</option>
+                <option value="utf-16le">UTF-16 LE</option>
+                <option value="utf-16be">UTF-16 BE</option>
+                <option value="ascii">ASCII</option>
+              </select>
+            </label>
+            <button id="textRefresh">Neu laden</button>
+          </div>
+          <pre id="textPreview" class="text-preview"></pre>
+          <div id="encodingStats" class="stats"></div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-signatures">
+        <div class="card">
+          <h3>Gefundene Datei-Signaturen (Magic Numbers)</h3>
+          <div id="signaturesList"></div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-extract">
+        <div class="card">
+          <h3>Mögliche eingebettete Dateien</h3>
+          <p class="hint">Basierend auf bekannten Magic Bytes. Klicke zum Herunterladen.</p>
+          <div id="extractList"></div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-xor">
+        <div class="card">
+          <h3>XOR-Dekodierung</h3>
+          <div class="toolbar">
+            <label>Key (Hex, z.B. FF oder 4142):
+              <input type="text" id="xorKey" placeholder="z.B. 55 oder DEAD" value="">
+            </label>
+            <button id="xorApply">Anwenden</button>
+            <button id="xorBrute">Häufige Keys testen</button>
+          </div>
+          <pre id="xorPreview" class="text-preview"></pre>
+          <div id="xorResults"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
